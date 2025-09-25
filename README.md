@@ -36,9 +36,10 @@ lidar_localization_ros2 package is used for lidar localization to obtain pose fo
 Pose from lidar_localization is fused with orientation from imu data using robot_localization ekf package.  
 IMU orientation, angular velocity and linear acceleration are all used in robot_localization to obtain best outcome.  
 <img width="1595" height="960" alt="Screenshot from 2025-09-25 12-02-51" src="https://github.com/user-attachments/assets/f44717fd-d9a0-4abc-b072-374179913dc9" />  
-X Pose: Filtered Odometry from robot localization (top) vs lidar localization (bottom)  
+Pose X: Filtered Odometry from robot localization (top) vs pose from lidar localization (bottom)  
 <img width="1585" height="917" alt="Screenshot from 2025-09-25 12-05-17" src="https://github.com/user-attachments/assets/ddb9174c-d76e-4474-b209-d8326de0fb1e" />
-Y Pose: Filtered Odometry from robot localization (top) vs lidar localization (bottom)  
+Pose Y: Filtered Odometry from robot localization (top) vs pose from lidar localization (bottom)  
+Data recorded from warehouse4.db3
 
 ## Steps to reproduce
 Launch imu103 package
@@ -54,7 +55,8 @@ Launch lidar_localization
 ros2 launch lidar_localization_ros2 lidar_localization.launch.py
 ```
 Launch rviz and set initial pose
-(add image of initial poses for different bag files)  
+ <img width="1625" height="895" alt="Screenshot from 2025-09-25 14-33-22" src="https://github.com/user-attachments/assets/498a9200-ec72-40ed-b6ac-7a2258b8daa5" />
+
 Launch robot_localization
 ```
 ros2 launch robot_localization ekf.launch.py
