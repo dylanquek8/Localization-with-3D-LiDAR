@@ -1,5 +1,5 @@
 # Localization-with-3D-LiDAR
-This github repo contains the packages used for Localization with the Robosense AIRY (3D LiDAR)
+This github repo contains the packages used for Localization with Robosense AIRY (3D LiDAR)
 
 ## Preparation of IMU data
 ### IMU calibration
