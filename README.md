@@ -31,7 +31,10 @@ Map is obtained using SLAM package Direct-LiDAR-Inertial-Odometry.
 
 ## LiDAR Localization
 lidar_localization_ros2 package is used for lidar localization to obtain pose for robot_localization input. IMU data is not used here, only LiDAR. Uses map obtained from SLAM (rs_warehouse_full.pcd). Publishes map -> odom tf.  
-
+Change topics for lidar points in launch file
+```
+remappings = [('cloud','/rslidar_points')
+```
 ## Robot_localization
 Pose from lidar_localization is fused with orientation from imu data using robot_localization ekf package.  
 IMU orientation, angular velocity and linear acceleration are all used in robot_localization to obtain best outcome.  
