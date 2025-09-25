@@ -1,2 +1,37 @@
 # Localization-with-3D-LiDAR
-Packages used for mapping and localization with 3D LiDAR in ROS and ROS2
+This github repo contains the packages used for Localization with the Robosense AIRY (3D LiDAR)
+
+## Preparation of IMU data
+### IMU calibration
+A stationary bag file (calibration.db3) of the LiDAR is recorded for static calibration. imu_to_csv.py records imu data from calibration.db3 into a csv file. analyze_imu_noise.py reads the csv file and obtains the covariance for angular velocity and linear acceleration.
+
+### Correcting IMU frame
+<img width="675" height="599" alt="image" src="https://github.com/user-attachments/assets/df7e8676-c9df-452c-9c87-a552ccd4ea49" />.\
+https://github.com/RoboSense-LiDAR/rslidar_sdk/issues/172 This issue raised in Robosense's github shows that the IMU frame is following REP-145 while LiDAR frame is following REP-103 (ENU).
+```
+  static bool output = true;
+  if(output){
+    output = false;
+    RS_INFOL << "imu_calib rotation[x,y,z,w]:[" << this->device_info_.qx << ","
+             << this->device_info_.qy << "," << this->device_info_.qz << ","
+             << this->device_info_.qw << "]" << " translation[x,y,z]:["
+             << this->device_info_.x << "," << this->device_info_.y << ","
+             << this->device_info_.z << "]" << RS_REND;
+```
+Adding this into decoder_RSAIRY.hpp of robosense driver publishes the calibration quaternion and translation vectors from imu to lidar when launching the robosense driver.
+### Convert to ROS REP-103
+IMU data is used as input for robot_localization package and the package expects the data to be in ROS REP-103 format.  
+imu103 package does this by changing the units of the imu data from g -> m/s^2 (linear acceleration) and deg/s -> rad/s (angular velocity) and publishing it. Covariance obtained from static calibration is also published in imu message.  
+Using the calibration quaternion, it also rotates the imu data from the IMU frame to LiDAR frame (ENU).
+### Publishing Orientation in IMU message
+Robosense built-in IMU is 6DOF and thus it does not publish orientation. imu_filter_madgwick uses angular velocity published from imu to publish orientation. It also assumes input data is in ENU frame.
+
+## Mapping
+Map is obtained using SLAM package Direct-LiDAR-Inertial-Odometry.
+
+## LiDAR Localization
+lidar_localization_ros2 package is used for lidar localization to obtain pose for robot_localization input. IMU data is not used here, only LiDAR. Uses map obtained from SLAM (rs_warehouse_full.pcd).  
+
+## Robot_localization
+Pose from lidar_localization is fused with orientation from imu data using robot_localization ekf package.  
+IMU orientation, angular velocity and linear acceleration are all used in robot_localization to obtain best outcome
